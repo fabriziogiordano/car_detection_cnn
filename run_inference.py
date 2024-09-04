@@ -1,7 +1,10 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, message="TypedStorage is deprecated")
+
 import torch
 from PIL import Image
 from torchvision import transforms
-from model import SimpleCNN  # Ensure this matches your model definition
+from model import CarDetectionCNN  # Ensure this matches your model definition
 
 # Define transformations
 transform = transforms.Compose([
@@ -20,7 +23,7 @@ def load_model(model_path, quantized=False):
     Returns:
     - model (torch.nn.Module): Loaded model ready for inference.
     """
-    model = SimpleCNN()
+    model = CarDetectionCNN()
     if quantized:
         # Apply quantization to the model
         model = torch.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
@@ -51,7 +54,7 @@ def classify_image(model, image_path):
         _, predicted = torch.max(output, 1)
     
     # Define class labels
-    classes = ['no car parked', 'car parked', 'unknown']
+    classes = [ 'car parked', 'no car parked','unknown']
     return classes[predicted.item()]
 
 def main():
@@ -71,7 +74,8 @@ def main():
         model = load_model(regular_model_path, quantized=False)
 
     # Specify the path to the image you want to classify
-    image_path = './20240831190201.jpg'  # Replace with the actual path of the image
+    image_path = './20240831190201.jpg' # Car Parked
+    image_path = './20240902082401.jpg' # Car Not Parked
 
     # Classify the image
     result = classify_image(model, image_path)

@@ -1,16 +1,16 @@
 import torch
 from PIL import Image
 from torchvision import transforms
-from model import SimpleCNN
+from model import CarDetectionCNN
 
 # Load the trained model
-model = SimpleCNN()
+model = CarDetectionCNN()
 model.load_state_dict(torch.load('parking_lot_model.pth', weights_only=True))
 model.eval()
 
 # Define transformations
 transform = transforms.Compose([
-    #transforms.Resize((128, 128)),
+    # transforms.Resize((128, 128)),
     transforms.ToTensor(),
 ])
 

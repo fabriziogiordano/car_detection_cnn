@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from model import SimpleCNN
+from model import CarDetectionCNN
 
 # Define data transformations
 transform = transforms.Compose([
@@ -16,7 +16,7 @@ train_data = ImageFolder('data/train', transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
 # Initialize the model, loss function, and optimizer
-model = SimpleCNN()
+model = CarDetectionCNN()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 

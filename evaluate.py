@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from model import SimpleCNN
+from model import CarDetectionCNN
 
 # Define data transformations
 transform = transforms.Compose([
@@ -15,7 +15,7 @@ test_data = ImageFolder('data/test', transform=transform)
 test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Initialize and load the trained model
-model = SimpleCNN()
+model = CarDetectionCNN()
 model.load_state_dict(torch.load('parking_lot_model.pth', weights_only=True))
 model.eval()
 
