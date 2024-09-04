@@ -1,36 +1,34 @@
 import torch
-import cv2
 from PIL import Image
 from torchvision import transforms
-from model import SimpleCNN  # Import the model from model.py
+from model import SimpleCNN
 
-# Load the model
+# Load the trained model
 model = SimpleCNN()
 model.load_state_dict(torch.load('parking_lot_model.pth'))
 model.eval()
 
-# Define the transformation
+# Define transformations
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),
+    #transforms.Resize((128, 128)),
     transforms.ToTensor(),
 ])
 
-# Capture image from camera
-cap = cv2.VideoCapture(0)
-ret, frame = cap.read()
-cap.release()
+def classify_image(image_path):
+    """
+    Classifies an image as 'car parked', 'no car parked', or 'unknown'.
+    """
+    image = Image.open(image_path)
+    image = transform(image).unsqueeze(0)  # Add batch dimension
 
-# Preprocess the image
-image = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-image = transform(image)
-image = image.unsqueeze(0)  # Add batch dimension
+    with torch.no_grad():
+        output = model(image)
+        _, predicted = torch.max(output, 1)
+    
+    classes = ['no car parked', 'car parked', 'unknown']
+    return classes[predicted.item()]
 
-# Perform inference
-output = model(image)
-_, predicted = torch.max(output, 1)
-
-# Print the result
-if predicted.item() == 0:
-    print("No car detected")
-else:
-    print("Car detected")
+# Example of classifying an image
+image_path = 'images/example.jpg'
+result = classify_image(image_path)
+print(f"Result: {result}")
