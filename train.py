@@ -1,4 +1,5 @@
 import torch
+import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
@@ -7,7 +8,6 @@ from model import SimpleCNN
 
 # Define data transformations
 transform = transforms.Compose([
-    # transforms.Resize((128, 128)),
     transforms.ToTensor(),
 ])
 
@@ -21,7 +21,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Training loop
-epochs = 10
+epochs = 50
 for epoch in range(epochs):
     model.train()
     running_loss = 0.0
@@ -35,5 +35,15 @@ for epoch in range(epochs):
     
     print(f"Epoch {epoch + 1}/{epochs}, Loss: {running_loss / len(train_loader)}")
 
-# Save the trained model
+# Save the trained model state dictionary
 torch.save(model.state_dict(), 'parking_lot_model.pth')
+
+# Quantize the model dynamically for inference
+quantized_model = torch.quantization.quantize_dynamic(
+    model, 
+    {nn.Linear},  # Specify layers to be quantized (e.g., Linear layers)
+    dtype=torch.qint8  # Use 8-bit integer quantization
+)
+
+# Save the quantized model state dictionary
+torch.save(quantized_model.state_dict(), 'quantized_parking_lot_model.pth')

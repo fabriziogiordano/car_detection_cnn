@@ -5,7 +5,7 @@ from model import SimpleCNN
 
 # Load the trained model
 model = SimpleCNN()
-model.load_state_dict(torch.load('parking_lot_model.pth'))
+model.load_state_dict(torch.load('parking_lot_model.pth', weights_only=True))
 model.eval()
 
 # Define transformations
