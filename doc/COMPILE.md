@@ -25,7 +25,7 @@ If the generated spec file doesn’t include your model file, you can manually m
 ```python
 # Modify the spec file's datas section to include your model
 datas = [
-    ('quantized_parking_lot_model_scripted.pt', '.'),  # Include your quantized model
+    ('quantized_car_detection_cnn_scripted.pt', '.'),  # Include your quantized model
 ]
 
 # Rest of the spec file remains unchanged
@@ -34,7 +34,7 @@ datas = [
 #### Step 4: Build the Executable
 Run PyInstaller with the modified `.spec` file to create the executable:
 ```bash
-pyinstaller parking_lot_classifier.spec
+pyinstaller car_detection_cnn.spec
 ```
 
 This will generate a standalone executable in the `dist` directory.

@@ -5,6 +5,6 @@
 python -m venv .venv
 source .venv/bin/activate
 deactivate
-pip install torch torchvision torchaudio
+pip install torch torchvision torchaudio pyinstaller
 pip freeze > requirements.txt
 pip install -r requirements.txt

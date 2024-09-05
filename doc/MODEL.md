@@ -20,5 +20,5 @@
 ├── evaluate.py                # Python script for evaluating the model
 ├── preprocess.py              # Python script for preprocessing and optionally saving images
 ├── inference.py               # Python script for running inference on Raspberry Pi
-├── parking_lot_model.pth      # Saved model after training
+├── car_detection_cnn.pth      # Saved model after training
 └── README.md                  # Instructions and documentation

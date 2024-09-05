@@ -6,7 +6,7 @@ model = CarDetectionCNN()
 # Make sure to load without strict to avoid missing keys warnings if using quantization-specific state dicts
 model.load_state_dict(
     torch.load(
-        "parking_lot_model.pth",
+        "./models/v2/car_detection_cnn.quantized.pth",
         weights_only=True,
         map_location=torch.device("cpu"),
     ),
@@ -26,5 +26,5 @@ except Exception as e:
     print("Scripting failed:", e)
 
 # Save the scripted model
-scripted_model.save("quantized_parking_lot_model_scripted.pt")
-print("Scripted model saved successfully as quantized_parking_lot_model_scripted.pt")
+scripted_model.save("./models/v2/car_detection_cnn_scripted.quantized.pt")
+print("Scripted model saved successfully as car_detection_cnn_scripted.quantized.pt")

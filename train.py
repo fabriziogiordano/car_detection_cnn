@@ -15,14 +15,14 @@ train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
 # Initialize the model, loss function, and optimizer
 model = CarDetectionCNN()
-model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
+model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth", weights_only=True))
 model.train()  # Set the model to training mode
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Training loop
-epochs = 50
+epochs = 100
 for epoch in range(epochs):
     model.train()
     running_loss = 0.0
@@ -37,7 +37,7 @@ for epoch in range(epochs):
     print(f"Epoch {epoch + 1}/{epochs}, Loss: {running_loss / len(train_loader)}")
 
 # Save the trained model state dictionary
-torch.save(model.state_dict(), "parking_lot_model.updated.pth")
+torch.save(model.state_dict(), "./models/v3/car_detection_cnn.pth")
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
@@ -47,4 +47,4 @@ quantized_model = torch.quantization.quantize_dynamic(
 )
 
 # Save the quantized model state dictionary
-torch.save(quantized_model.state_dict(), "quantized_parking_lot_model.updated.pth")
+torch.save(quantized_model.state_dict(), "./models/v3/car_detection_cnn.quantized.pth")

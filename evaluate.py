@@ -18,7 +18,7 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Initialize and load the trained model
 model = CarDetectionCNN()
-model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
+model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth", weights_only=True))
 model.eval()
 
 # Evaluation loop

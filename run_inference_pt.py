@@ -52,15 +52,15 @@ def classify_image(model, image_path):
 
 def main():
     # Path to the scripted model
-    #scripted_model_path = "parking_lot_model_scripted.pt"
-    scripted_model_path = "quantized_parking_lot_model_scripted.pt"
+    #scripted_model_path = "car_detection_cnn_scripted.pt"
+    scripted_model_path = "./models/v2car_detection_cnn_scripted.quantized.pt"
 
     # Load the scripted model
     print("Loading scripted model...")
     model = load_scripted_model(scripted_model_path)
 
     # Specify the path to the image you want to classify
-    image_path = "./20240831190201.jpg"  # Car Parked
+    image_path = "./data/20240831190201.jpg"  # Car Parked
     #image_path = "./20240902082401.jpg"  # Car Not Parked
 
     # Classify the image

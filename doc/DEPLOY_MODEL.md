@@ -17,17 +17,17 @@ Here's how to do it:
 
    # Load your trained model state dictionary
    model = CarDetectionCNN()
-   model.load_state_dict(torch.load('parking_lot_model.pth', map_location=torch.device('cpu')))
+   model.load_state_dict(torch.load('./models/car_detection_cnn.pth', map_location=torch.device('cpu')))
    model.eval()  # Set the model to evaluation mode
 
    # Script the model (converts it into a format suitable for deployment)
    scripted_model = torch.jit.script(model)
 
    # Save the scripted model
-   scripted_model.save('parking_lot_model_scripted.pt')
+   scripted_model.save('./models/car_detection_cnn_scripted.pt')
    ```
 
-   - This step creates a `.pt` file (`parking_lot_model_scripted.pt`) that contains the entire model in a serialized form.
+   - This step creates a `.pt` file (`./models/car_detection_cnn_scripted.pt`) that contains the entire model in a serialized form.
 
 2. **Using the Scripted Model on Raspberry Pi**: Load and run inference using the scripted model without requiring the full model code.
 
@@ -84,7 +84,7 @@ Here's how to do it:
 
    def main():
        # Path to the scripted model
-       scripted_model_path = 'parking_lot_model_scripted.pt'
+       scripted_model_path = './models/car_detection_cnn_scripted.pt'
 
        # Load the scripted model
        print("Loading scripted model...")
@@ -107,7 +107,7 @@ Here's how to do it:
 - **Portability**: The serialized model can be easily transferred to other devices (like a Raspberry Pi) and used for inference.
 
 ### Deployment on Raspberry Pi:
-- Transfer the `parking_lot_model_scripted.pt` file to your Raspberry Pi.
+- Transfer the `car_detection_cnn_scripted.pt` file to your Raspberry Pi.
 - Run the `run_inference.py` script on the Pi using:
 
   ```bash

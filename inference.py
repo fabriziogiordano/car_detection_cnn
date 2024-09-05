@@ -5,7 +5,7 @@ from model import CarDetectionCNN
 
 # Load the trained model
 model = CarDetectionCNN()
-model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
+model.load_state_dict(torch.load("./models/v1/car_detection_cnn.pth", weights_only=True))
 model.eval()
 
 # Define transformations
@@ -33,6 +33,6 @@ def classify_image(image_path):
 
 
 # Example of classifying an image
-image_path = "images/example.jpg"
+image_path = "./data/20240831190201.jpg"
 result = classify_image(image_path)
 print(f"Result: {result}")

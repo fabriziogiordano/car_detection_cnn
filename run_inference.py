@@ -71,8 +71,8 @@ def classify_image(model, image_path):
 
 def main():
     # Paths to models
-    regular_model_path = "parking_lot_model.pth"
-    quantized_model_path = "quantized_parking_lot_model.pth"
+    regular_model_path = "./models/v2/car_detection_cnn.pth"
+    quantized_model_path = "./models/v2/car_detection_cnn.quantized.pth"
 
     # Choose whether to use the quantized model
     use_quantized = True  # Set to False to use the regular model
@@ -86,8 +86,8 @@ def main():
         model = load_model(regular_model_path, quantized=False)
 
     # Specify the path to the image you want to classify
-    image_path = "./20240831190201.jpg"  # Car Parked
-    image_path = "./20240902082401.jpg"  # Car Not Parked
+    image_path = "./data/20240831190201.jpg"  # Car Parked
+    #image_path = "./data/20240902082401.jpg"  # Car Not Parked
 
     # Classify the image
     result = classify_image(model, image_path)
