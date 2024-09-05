@@ -1,11 +1,11 @@
 import torch
-from model import CarDetectionCNN  # Import your model definition
+from model import CarDetectionCNNSmall
 
 # Load your trained model state dictionary
-model = CarDetectionCNN()
+model = CarDetectionCNNSmall()
 model.load_state_dict(
     torch.load(
-        "./models/v2/car_detection_cnn.pth",
+        "./models/v2/car_detection_cnn.small.pth",
         weights_only=True,
         map_location=torch.device("cpu"),
     )
@@ -16,4 +16,4 @@ model.eval()  # Set the model to evaluation mode
 scripted_model = torch.jit.script(model)
 
 # Save the scripted model
-scripted_model.save("./models/v2/car_detection_cnn_scripted.pt")
+scripted_model.save("./models/v2/car_detection_cnn_scripted.small.pt")

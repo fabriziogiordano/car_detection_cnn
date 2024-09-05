@@ -7,7 +7,7 @@ warnings.filterwarnings(
 import torch
 from PIL import Image
 from torchvision import transforms
-from model import CarDetectionCNN  # Ensure this matches your model definition
+from model import CarDetectionCNNSmall
 
 # Define transformations
 transform = transforms.Compose(
@@ -29,7 +29,7 @@ def load_model(model_path, quantized=False):
     Returns:
     - model (torch.nn.Module): Loaded model ready for inference.
     """
-    model = CarDetectionCNN()
+    model = CarDetectionCNNSmall()
     if quantized:
         # Apply quantization to the model
         model = torch.quantization.quantize_dynamic(
@@ -71,8 +71,8 @@ def classify_image(model, image_path):
 
 def main():
     # Paths to models
-    regular_model_path = "./models/v2/car_detection_cnn.pth"
-    quantized_model_path = "./models/v2/car_detection_cnn.quantized.pth"
+    regular_model_path = "./models/v2/car_detection_cnn.small.pth"
+    quantized_model_path = "./models/v2/car_detection_cnn.small.quantized.pth"
 
     # Choose whether to use the quantized model
     use_quantized = True  # Set to False to use the regular model

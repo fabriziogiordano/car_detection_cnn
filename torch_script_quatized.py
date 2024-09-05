@@ -1,12 +1,12 @@
 import torch
-from model import CarDetectionCNN  # Import your model definition
+from model import CarDetectionCNNSmall
 
 # Load your quantized model state dictionary
-model = CarDetectionCNN()
+model = CarDetectionCNNSmall()
 # Make sure to load without strict to avoid missing keys warnings if using quantization-specific state dicts
 model.load_state_dict(
     torch.load(
-        "./models/v2/car_detection_cnn.quantized.pth",
+        "./models/v2/car_detection_cnn.small.quantized.pth",
         weights_only=True,
         map_location=torch.device("cpu"),
     ),
@@ -26,5 +26,5 @@ except Exception as e:
     print("Scripting failed:", e)
 
 # Save the scripted model
-scripted_model.save("./models/v2/car_detection_cnn_scripted.quantized.pt")
-print("Scripted model saved successfully as car_detection_cnn_scripted.quantized.pt")
+scripted_model.save("./models/v2/car_detection_cnn_scripted.small.quantized.pt")
+print("Scripted model saved successfully as car_detection_cnn_scripted.small.quantized.pt")

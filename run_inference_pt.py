@@ -53,7 +53,7 @@ def classify_image(model, image_path):
 def main():
     # Path to the scripted model
     #scripted_model_path = "car_detection_cnn_scripted.pt"
-    scripted_model_path = "./models/v2car_detection_cnn_scripted.quantized.pt"
+    scripted_model_path = "./models/v2car_detection_cnn_scripted.small.quantized.pt"
 
     # Load the scripted model
     print("Loading scripted model...")

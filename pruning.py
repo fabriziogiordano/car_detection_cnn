@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision import transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
-from model import CarDetectionCNN
+from model import CarDetectionCNNSmall
 from prune import apply_pruning, fine_tune_model, remove_pruning_hooks
 
 # Define transformations
@@ -14,9 +14,9 @@ train_data = ImageFolder("data/train", transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
 # Initialize the model
-model = CarDetectionCNN()
+model = CarDetectionCNNSmall()
 model.load_state_dict(
-    torch.load("./models/v2/car_detection_cnn.pth", weights_only=True)
+    torch.load("./models/v2/car_detection_cnn.small.pth", weights_only=True)
 )
 model.train()  # Set the model to training mode
 
@@ -30,7 +30,7 @@ fine_tune_model(model, train_loader, epochs=10)
 remove_pruning_hooks(model)
 
 # Save the trained model state dictionary
-torch.save(model.state_dict(), "./models/v2/car_detection_cnn.pruned.pth")
+torch.save(model.state_dict(), "./models/v2/car_detection_cnn.small.pruned.pth")
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
@@ -40,4 +40,4 @@ quantized_model = torch.quantization.quantize_dynamic(
 )
 
 # Save the quantized model state dictionary
-torch.save(quantized_model.state_dict(), "./models/v2/car_detection_cnn.pruned.quantized.pth")
+torch.save(quantized_model.state_dict(), "./models/v2/car_detection_cnn.small.pruned.quantized.pth")
