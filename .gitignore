@@ -4,3 +4,5 @@ __pycache__/
 *.jpg
 *.pth
 *.pt
+
+dist/parking_lot_classifier
