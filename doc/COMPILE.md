@@ -35,6 +35,9 @@ datas = [
 Run PyInstaller with the modified `.spec` file to create the executable:
 ```bash
 pyinstaller car_detection_cnn.spec
+
+pyinstaller car_detection_cnn.spec && cp dist/car_detection ../astro/db
+
 ```
 
 This will generate a standalone executable in the `dist` directory.
