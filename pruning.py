@@ -1,45 +1,36 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
+from torchvision import transforms
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
-from torchvision import transforms
 from model import CarDetectionCNN
+from prune import apply_pruning, fine_tune_model, remove_pruning_hooks
 
-# Define data transformations
+# Define transformations
 transform = transforms.Compose([transforms.ToTensor()])
 
 # Load training data
 train_data = ImageFolder("data/train", transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
-# Initialize the model, loss function, and optimizer
+# Initialize the model
 model = CarDetectionCNN()
 model.load_state_dict(
     torch.load("./models/v2/car_detection_cnn.pth", weights_only=True)
 )
 model.train()  # Set the model to training mode
 
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+# Apply pruning
+model = apply_pruning(model)
 
-# Training loop
-epochs = 100
-for epoch in range(epochs):
-    model.train()
-    running_loss = 0.0
-    for images, labels in train_loader:
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item()
+# Fine-tune the model
+fine_tune_model(model, train_loader, epochs=10)
 
-    print(f"Epoch {epoch + 1}/{epochs}, Loss: {running_loss / len(train_loader)}")
+# Remove pruning hooks
+remove_pruning_hooks(model)
 
 # Save the trained model state dictionary
-torch.save(model.state_dict(), "./models/v3/car_detection_cnn.pth")
+torch.save(model.state_dict(), "./models/v2/car_detection_cnn.pruned.pth")
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
@@ -49,4 +40,4 @@ quantized_model = torch.quantization.quantize_dynamic(
 )
 
 # Save the quantized model state dictionary
-torch.save(quantized_model.state_dict(), "./models/v3/car_detection_cnn.quantized.pth")
+torch.save(quantized_model.state_dict(), "./models/v2/car_detection_cnn.pruned.quantized.pth")
