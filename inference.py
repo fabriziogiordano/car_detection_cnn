@@ -5,14 +5,17 @@ from model import CarDetectionCNN
 
 # Load the trained model
 model = CarDetectionCNN()
-model.load_state_dict(torch.load('parking_lot_model.pth', weights_only=True))
+model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
 model.eval()
 
 # Define transformations
-transform = transforms.Compose([
-    # transforms.Resize((128, 128)),
-    transforms.ToTensor(),
-])
+transform = transforms.Compose(
+    [
+        # transforms.Resize((128, 128)),
+        transforms.ToTensor(),
+    ]
+)
+
 
 def classify_image(image_path):
     """
@@ -24,11 +27,12 @@ def classify_image(image_path):
     with torch.no_grad():
         output = model(image)
         _, predicted = torch.max(output, 1)
-    
-    classes = ['no car parked', 'car parked', 'unknown']
+
+    classes = ["car parked", "no car parked", "unknown"]
     return classes[predicted.item()]
 
+
 # Example of classifying an image
-image_path = 'images/example.jpg'
+image_path = "images/example.jpg"
 result = classify_image(image_path)
 print(f"Result: {result}")

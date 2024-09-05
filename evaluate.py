@@ -5,18 +5,20 @@ from torchvision import transforms
 from model import CarDetectionCNN
 
 # Define data transformations
-transform = transforms.Compose([
-    # transforms.Resize((128, 128)),
-    transforms.ToTensor(),
-])
+transform = transforms.Compose(
+    [
+        # transforms.Resize((128, 128)),
+        transforms.ToTensor(),
+    ]
+)
 
 # Load test data
-test_data = ImageFolder('data/test', transform=transform)
+test_data = ImageFolder("data/test", transform=transform)
 test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Initialize and load the trained model
 model = CarDetectionCNN()
-model.load_state_dict(torch.load('parking_lot_model.pth', weights_only=True))
+model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
 model.eval()
 
 # Evaluation loop

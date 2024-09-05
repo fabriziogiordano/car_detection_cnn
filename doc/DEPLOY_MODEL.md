@@ -13,10 +13,10 @@ Here's how to do it:
 
    ```python
    import torch
-   from model import SimpleCNN  # Import your model definition
+   from model import CarDetectionCNN  # Import your model definition
 
    # Load your trained model state dictionary
-   model = SimpleCNN()
+   model = CarDetectionCNN()
    model.load_state_dict(torch.load('parking_lot_model.pth', map_location=torch.device('cpu')))
    model.eval()  # Set the model to evaluation mode
 

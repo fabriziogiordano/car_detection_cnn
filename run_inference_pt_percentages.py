@@ -1,10 +1,14 @@
+import os
+
 import torch
 from PIL import Image
 from torchvision import transforms
+import argparse
 
 # Define transformations
 transform = transforms.Compose(
     [
+        transforms.Resize((128, 128)),
         transforms.ToTensor(),
     ]
 )
@@ -27,14 +31,14 @@ def load_scripted_model(model_path):
 
 def classify_image(model, image_path):
     """
-    Classifies an image as 'car parked', 'no car parked', or 'unknown'.
+    Classifies an image as 'car parked', 'no car parked', or 'unknown' and returns the probability.
 
     Parameters:
     - model (torch.jit.ScriptModule): The scripted model for inference.
     - image_path (str): Path to the image to be classified.
 
     Returns:
-    - str: Classification result ('car parked', 'no car parked', 'unknown').
+    - tuple: (classification result, probability)
     """
     # Load and transform the image
     image = Image.open(image_path)
@@ -43,29 +47,47 @@ def classify_image(model, image_path):
     # Perform inference
     with torch.no_grad():
         output = model(image)
-        _, predicted = torch.max(output, 1)
+        probabilities = torch.softmax(
+            output, dim=1
+        )  # Apply softmax to get probabilities
+        predicted = torch.argmax(
+            probabilities, 1
+        )  # Get the class with the highest probability
 
     # Define class labels
     classes = ["car parked", "not car parked", "unknown"]
-    return classes[predicted.item()]
+
+    # Extract the probability of the predicted class
+    predicted_class = predicted.item()
+    probability = probabilities[
+        0, predicted_class
+    ].item()  # Get the probability of the predicted class
+
+    return classes[predicted_class], probability
 
 
 def main():
+    # Create argument parser
+    parser = argparse.ArgumentParser(
+        description="Classify an image using a scripted model."
+    )
+    parser.add_argument(
+        "image_path", type=str, help="Path to the image to be classified"
+    )
+    args = parser.parse_args()
+
     # Path to the scripted model
-    #scripted_model_path = "parking_lot_model_scripted.pt"
     scripted_model_path = "quantized_parking_lot_model_scripted.pt"
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(base_path, scripted_model_path)
 
     # Load the scripted model
-    print("Loading scripted model...")
-    model = load_scripted_model(scripted_model_path)
-
-    # Specify the path to the image you want to classify
-    image_path = "./20240831190201.jpg"  # Car Parked
-    #image_path = "./20240902082401.jpg"  # Car Not Parked
+    # print("Loading scripted model...")
+    model = load_scripted_model(model_path)
 
     # Classify the image
-    result = classify_image(model, image_path)
-    print(f"Result: {result}")
+    result, probability = classify_image(model, args.image_path)
+    print(f"{result}, {probability:.2f}")
 
 
 if __name__ == "__main__":

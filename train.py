@@ -7,16 +7,17 @@ from torchvision import transforms
 from model import CarDetectionCNN
 
 # Define data transformations
-transform = transforms.Compose([
-    transforms.ToTensor(),
-])
+transform = transforms.Compose([transforms.ToTensor()])
 
 # Load training data
-train_data = ImageFolder('data/train', transform=transform)
+train_data = ImageFolder("data/train", transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
 # Initialize the model, loss function, and optimizer
 model = CarDetectionCNN()
+model.load_state_dict(torch.load("parking_lot_model.pth", weights_only=True))
+model.train()  # Set the model to training mode
+
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -32,18 +33,18 @@ for epoch in range(epochs):
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
-    
+
     print(f"Epoch {epoch + 1}/{epochs}, Loss: {running_loss / len(train_loader)}")
 
 # Save the trained model state dictionary
-torch.save(model.state_dict(), 'parking_lot_model.pth')
+torch.save(model.state_dict(), "parking_lot_model.updated.pth")
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
-    model, 
+    model,
     {nn.Linear},  # Specify layers to be quantized (e.g., Linear layers)
-    dtype=torch.qint8  # Use 8-bit integer quantization
+    dtype=torch.qint8,  # Use 8-bit integer quantization
 )
 
 # Save the quantized model state dictionary
-torch.save(quantized_model.state_dict(), 'quantized_parking_lot_model.pth')
+torch.save(quantized_model.state_dict(), "quantized_parking_lot_model.updated.pth")
