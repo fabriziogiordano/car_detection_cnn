@@ -3,4 +3,4 @@ build/
 __pycache__/
 *.jpg
 
-dist/parking_lot_classifier
+dist/car_detection

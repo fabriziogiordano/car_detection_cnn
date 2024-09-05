@@ -24,7 +24,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='car_detetion',
+    name='car_detection',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
