@@ -45,7 +45,7 @@ for epoch in range(epochs):
         optimizer.zero_grad()
 
         # Mixed precision training context
-        with torch.amp.autocast():
+        with torch.amp.autocast(device_type=device):
             outputs = model(images)
             loss = criterion(outputs, labels)
 
