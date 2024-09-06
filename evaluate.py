@@ -1,9 +1,13 @@
 import torch
+import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 from model import CarDetectionCNN
 import argparse
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="torch._utils")
 
 # Define data transformations
 transform = transforms.Compose(
@@ -30,18 +34,22 @@ def load_model(model_path, device, quantized=False):
     model = CarDetectionCNN()
 
     if quantized:
-        # Set up the model for quantization
-        model.eval()  # Set to evaluation mode before quantization
-        model.qconfig = torch.ao.quantization.get_default_qconfig("fbgemm")
-        torch.ao.quantization.prepare(model, inplace=True)
-        torch.ao.quantization.convert(model, inplace=True)
+        # Force device to CPU for quantized models
+        device = torch.device("cpu")
+        print("Using CPU for quantized model.")
+        # Quantize the model dynamically (CPU only)
+        model = torch.ao.quantization.quantize_dynamic(
+            model, {nn.Linear}, dtype=torch.qint8
+        )
 
     # Load the model state dict
     state_dict = torch.load(model_path, weights_only=True, map_location=device)
 
     # Load state dict into the model (use strict=False if quantized)
     model.load_state_dict(state_dict, strict=not quantized)
-    model.to(device)  # Move model to the specified device
+
+    # Move model to the specified device
+    model.to(device)
     model.eval()
 
     return model
@@ -49,28 +57,32 @@ def load_model(model_path, device, quantized=False):
 
 def evaluate_model(model, test_loader, device):
     """
-    Evaluate the model on the test dataset.
+    Evaluate the model on the test data.
 
     Parameters:
     - model (nn.Module): The model to be evaluated.
     - test_loader (DataLoader): DataLoader for the test dataset.
     - device (torch.device): Device to perform evaluation on (CPU or CUDA).
-
-    Prints the accuracy of the model.
     """
+    model.eval()  # Set the model to evaluation mode
     correct = 0
     total = 0
-    with torch.no_grad():
+
+    with torch.no_grad():  # Disable gradient calculation for evaluation
         for images, labels in test_loader:
-            images, labels = images.to(device), labels.to(
-                device
-            )  # Move data to the device
+            if device.type == "cpu":
+                images, labels = images.to(device), labels.to(device)
+            else:
+                images, labels = images.to(device), labels.to(device)
+
+            # Forward pass
             outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
+            _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print(f"Accuracy: {100 * correct / total:.2f}%")
+    accuracy = 100 * correct / total
+    print(f"Accuracy of the model on the test set: {accuracy:.2f}%")
 
 
 def main():
@@ -89,7 +101,9 @@ def main():
     args = parser.parse_args()
 
     # Check if CUDA is available and select device accordingly
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() and not args.quantized else "cpu"
+    )
     print(f"Using device: {device}")
 
     # Load test data

@@ -5,7 +5,7 @@ from model import CarDetectionCNN
 
 # Load the trained model
 model = CarDetectionCNN()
-model.load_state_dict(torch.load("./models/v2/car_detection_cnn.small.pth", weights_only=True))
+model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth", weights_only=True, map_location=torch.device('cpu')))
 model.eval()
 
 # Define transformations

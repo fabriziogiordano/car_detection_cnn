@@ -77,9 +77,8 @@ def main():
     args = parser.parse_args()
 
     # Path to the scripted model
-    scripted_model_path = "./models/v2/car_detection_cnn_scripted.small.quantized.pt"
     base_path = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(base_path, scripted_model_path)
+    model_path = os.path.join(base_path, "./models/v2/car_detection_cnn_scripted_quantized.pt")
 
     # Load the scripted model
     # print("Loading scripted model...")

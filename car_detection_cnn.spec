@@ -1,12 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller import log as logger
+import os
+
+# Verify the model file exists
+model_file = './models/v2/car_detection_cnn_scripted_quantized.pt'
+if not os.path.isfile(model_file):
+    logger.error(f"Model file {model_file} does not exist.")
+    raise FileNotFoundError(f"Model file {model_file} does not exist.")
 
 a = Analysis(
     ['run_inference_pt_percentages.py'],
     pathex=[],
     binaries=[],
-    datas=[('./models/v2/car_detection_cnn_scripted.quantized.pt', '.')],  # Include your quantized model
+    datas=[(model_file, '.')],  # Ensure this path is correct
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

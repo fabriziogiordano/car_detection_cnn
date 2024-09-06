@@ -37,7 +37,7 @@ scaler = torch.amp.GradScaler()
 
 # Early stopping parameters
 best_val_loss = float("inf")
-patience = 10  # Number of epochs to wait for improvement
+patience = 50  # Number of epochs to wait for improvement
 epochs_no_improve = 0
 
 # Training loop
@@ -48,7 +48,7 @@ for epoch in range(epochs):
     for images, labels in train_loader:
         images, labels = images.to(device, non_blocking=True), labels.to(
             device, non_blocking=True
-        )  # Move data to the GPU
+        )
         optimizer.zero_grad()
 
         # Mixed precision training context
@@ -98,7 +98,9 @@ for epoch in range(epochs):
             break
 
 # Load the best model for further usage or inference
-model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth", weights_only=True))
+model.load_state_dict(
+    torch.load("./models/v2/car_detection_cnn.pth", weights_only=True)
+)
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
@@ -108,6 +110,4 @@ quantized_model = torch.quantization.quantize_dynamic(
 )
 
 # Save the quantized model state dictionary
-torch.save(
-    quantized_model.state_dict(), "./models/v2/car_detection_cnn.quantized.pth"
-)
+torch.save(quantized_model.state_dict(), "./models/v2/car_detection_cnn_quantized.pth")
