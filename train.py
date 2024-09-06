@@ -89,7 +89,7 @@ for epoch in range(epochs):
         best_val_loss = avg_val_loss
         epochs_no_improve = 0
         torch.save(
-            model.state_dict(), "./models/v2/best_model.pth"
+            model.state_dict(), "./models/v2/car_detection_cnn.pth"
         )  # Save the best model
     else:
         epochs_no_improve += 1
