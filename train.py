@@ -49,4 +49,4 @@ quantized_model = torch.quantization.quantize_dynamic(
 )
 
 # Save the quantized model state dictionary
-torch.save(quantized_model.state_dict(), "./models/v3/car_detection_cnn.small.quantized.pth")
+torch.save(quantized_model.state_dict(), "./models/v2/car_detection_cnn.small.quantized.pth")
