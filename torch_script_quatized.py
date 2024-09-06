@@ -1,8 +1,8 @@
 import torch
-from model import CarDetectionCNNSmall
+from model import CarDetectionCNN
 
 # Load your quantized model state dictionary
-model = CarDetectionCNNSmall()
+model = CarDetectionCNN()
 # Make sure to load without strict to avoid missing keys warnings if using quantization-specific state dicts
 model.load_state_dict(
     torch.load(

@@ -1,10 +1,10 @@
 import torch
 from PIL import Image
 from torchvision import transforms
-from model import CarDetectionCNNSmall
+from model import CarDetectionCNN
 
 # Load the trained model
-model = CarDetectionCNNSmall()
+model = CarDetectionCNN()
 model.load_state_dict(torch.load("./models/v2/car_detection_cnn.small.pth", weights_only=True))
 model.eval()
 
