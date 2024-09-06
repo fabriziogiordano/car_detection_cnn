@@ -37,7 +37,7 @@ def load_model(model_path, device, quantized=False):
         torch.ao.quantization.convert(model, inplace=True)
 
     # Load the model state dict
-    state_dict = torch.load(model_path, map_location=device)
+    state_dict = torch.load(model_path, weights_only=True, map_location=device)
 
     # Load state dict into the model (use strict=False if quantized)
     model.load_state_dict(state_dict, strict=not quantized)
