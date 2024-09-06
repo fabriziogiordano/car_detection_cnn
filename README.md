@@ -19,7 +19,7 @@ python evaluate.py
 python torch_script.py
 python torch_script_quantized.py
 
-On Local:
+## On Local:
 python inference.py
 python run_inference.py
 python run_inference_pt.py

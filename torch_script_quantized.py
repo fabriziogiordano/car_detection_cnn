@@ -29,5 +29,5 @@ except Exception as e:
     print("Scripting failed:", e)
 
 # Save the scripted model
-scripted_model.save("./models/v2/car_detection_cnn.scripted_quantized.pt")
-print("Scripted model saved successfully as car_detection_cnn.scripted_quantized.pt")
+scripted_model.save("./models/v2/car_detection_cnn_scripted_quantized.pt")
+print("Scripted model saved successfully as car_detection_cnn_scripted_quantized.pt")

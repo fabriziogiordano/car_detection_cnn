@@ -5,16 +5,16 @@ from PyInstaller import log as logger
 import os
 
 # Verify the model file exists
-model_file = './models/v2/car_detection_cnn_scripted_quantized.pt'
+model_file = "./models/prod/car_detection_cnn_scripted.pt"
 if not os.path.isfile(model_file):
     logger.error(f"Model file {model_file} does not exist.")
     raise FileNotFoundError(f"Model file {model_file} does not exist.")
 
 a = Analysis(
-    ['run_inference_pt_percentages.py'],
+    ["run_inference_pt_percentages.py"],
     pathex=[],
     binaries=[],
-    datas=[(model_file, '.')],  # Ensure this path is correct
+    datas=[(model_file, "models/prod")],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -32,7 +32,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='car_detection',
+    name="car_detection",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

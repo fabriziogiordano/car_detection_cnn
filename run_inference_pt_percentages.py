@@ -1,5 +1,5 @@
 import os
-
+import sys
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -24,6 +24,10 @@ def load_scripted_model(model_path):
     Returns:
     - model (torch.jit.ScriptModule): Loaded scripted model ready for inference.
     """
+    # If running in a PyInstaller bundle, use _MEIPASS to find the file
+    if getattr(sys, "frozen", False):
+        model_path = os.path.join(sys._MEIPASS, model_path)
+
     model = torch.jit.load(model_path, map_location=torch.device("cpu"))
     model.eval()  # Set the model to evaluation mode
     return model
@@ -77,11 +81,13 @@ def main():
     args = parser.parse_args()
 
     # Path to the scripted model
+    model_file = (
+        "models/prod/car_detection_cnn_scripted.pt"
+    )
     base_path = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(base_path, "./models/v2/car_detection_cnn_scripted_quantized.pt")
+    model_path = os.path.join(base_path, model_file)
 
     # Load the scripted model
-    # print("Loading scripted model...")
     model = load_scripted_model(model_path)
 
     # Classify the image

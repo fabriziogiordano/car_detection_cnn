@@ -16,4 +16,4 @@ model.eval()  # Set the model to evaluation mode
 scripted_model = torch.jit.script(model)
 
 # Save the scripted model
-scripted_model.save("./models/v2/car_detection_cnn.scripted.pt")
+scripted_model.save("./models/v2/car_detection_cnn_scripted.pt")
