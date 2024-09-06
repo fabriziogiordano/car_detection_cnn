@@ -25,5 +25,6 @@ python run_inference.py
 python run_inference_pt.py
 python run_inference_pt_percentages.py ./data/20240831190201.jpg
 python run_inference_pt_percentages.py ./data/20240902082401.jpg
+python run_inference_pt_percentages.py /home/pi/Projects/parking_lot_classifier/scripts/ftp/last.jpg
 rm -rf ./build && pyinstaller car_detection_cnn.spec && cp dist/car_detection ../astro/db
 

@@ -1,8 +1,8 @@
 import torch
-from model import CarDetectionCNN
+from model import CarDetectionCNNSmall
 
 # Load your trained model state dictionary
-model = CarDetectionCNN()
+model = CarDetectionCNNSmall()
 model.load_state_dict(
     torch.load(
         "./models/v2/car_detection_cnn.pth",

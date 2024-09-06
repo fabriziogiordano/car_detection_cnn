@@ -4,40 +4,36 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, random_split
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from model import CarDetectionCNN
+from model import CarDetectionCNNSmall
 
-# Check if CUDA is available
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Set device to CPU
+device = torch.device("cpu")
 print(f"Using device: {device}")
 
 # Define data transformations
 transform = transforms.Compose([transforms.ToTensor()])
 
 # Load training data and split into train and validation sets
-full_data = ImageFolder("data/train", transform=transform)
-train_size = int(0.8 * len(full_data))
-val_size = len(full_data) - train_size
-train_data, val_data = random_split(full_data, [train_size, val_size])
+train_data = ImageFolder("data/train", transform=transform)
+test_data = ImageFolder("data/test", transform=transform)
 
+# Set num_workers to 0 to avoid multiprocessing issues on CPU
 train_loader = DataLoader(
-    train_data, batch_size=32, shuffle=True, num_workers=4, pin_memory=True
+    train_data, batch_size=32, shuffle=True, num_workers=0, pin_memory=True
 )
-val_loader = DataLoader(
-    val_data, batch_size=32, shuffle=False, num_workers=4, pin_memory=True
+test_loader = DataLoader(
+    test_data, batch_size=32, shuffle=False, num_workers=0, pin_memory=True
 )
 
 # Initialize the model, loss function, and optimizer
-model = CarDetectionCNN().to(device)  # Move the model to the GPU
+model = CarDetectionCNNSmall().to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# Initialize scaler for mixed precision training
-scaler = torch.amp.GradScaler()
-
 # Early stopping parameters
-best_val_loss = float("inf")
 patience = 50  # Number of epochs to wait for improvement
+best_val_loss = float("inf")
 epochs_no_improve = 0
 
 # Training loop
@@ -46,43 +42,36 @@ for epoch in range(epochs):
     model.train()
     running_loss = 0.0
     for images, labels in train_loader:
-        images, labels = images.to(device, non_blocking=True), labels.to(
-            device, non_blocking=True
-        )
+        images, labels = images.to(device), labels.to(device)
         optimizer.zero_grad()
 
-        # Mixed precision training context
-        with torch.amp.autocast(device_type="cuda"):
-            outputs = model(images)
-            loss = criterion(outputs, labels)
+        # Forward pass
+        outputs = model(images)
+        loss = criterion(outputs, labels)
 
-        # Scale the loss and backward
-        scaler.scale(loss).backward()
-        # Step optimizer
-        scaler.step(optimizer)
-        # Update the scale for next iteration
-        scaler.update()
+        # Backward pass and optimization
+        loss.backward()
+        optimizer.step()
 
         running_loss += loss.item()
 
     avg_train_loss = running_loss / len(train_loader)
-    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss}")
+    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {avg_train_loss:.4f}")
 
     # Validation loop
     model.eval()
     val_loss = 0.0
     with torch.no_grad():
-        for images, labels in val_loader:
-            images, labels = images.to(device, non_blocking=True), labels.to(
-                device, non_blocking=True
-            )
-            with torch.amp.autocast(device_type="cuda"):
-                outputs = model(images)
-                loss = criterion(outputs, labels)
-                val_loss += loss.item()
+        for images, labels in test_loader:
+            images, labels = images.to(device), labels.to(device)
 
-    avg_val_loss = val_loss / len(val_loader)
-    print(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {avg_val_loss}")
+            # Forward pass
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            val_loss += loss.item()
+
+    avg_val_loss = val_loss / len(test_loader)
+    print(f"Epoch {epoch + 1}/{epochs}, Validation Loss: {avg_val_loss:.4f}")
 
     # Check if the validation loss has improved
     if avg_val_loss < best_val_loss:
@@ -98,13 +87,11 @@ for epoch in range(epochs):
             break
 
 # Load the best model for further usage or inference
-model.load_state_dict(
-    torch.load("./models/v2/car_detection_cnn.pth", weights_only=True)
-)
+model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth"))
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
-    model.to("cpu"),  # Move the model to the CPU before quantization
+    model,
     {nn.Linear},  # Specify layers to be quantized (e.g., Linear layers)
     dtype=torch.qint8,  # Use 8-bit integer quantization
 )

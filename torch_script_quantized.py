@@ -1,11 +1,11 @@
 import torch
-from model import CarDetectionCNN
+from model import CarDetectionCNNSmall
 
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="torch._utils")
 
 # Load your quantized model state dictionary
-model = CarDetectionCNN()
+model = CarDetectionCNNSmall()
 # Make sure to load without strict to avoid missing keys warnings if using quantization-specific state dicts
 model.load_state_dict(
     torch.load(
