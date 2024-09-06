@@ -5,7 +5,7 @@ from PyInstaller import log as logger
 import os
 
 # Verify the model file exists
-model_file = "./models/prod/car_detection_cnn_scripted.pt"
+model_file = "./models/prod/model.pt"
 if not os.path.isfile(model_file):
     logger.error(f"Model file {model_file} does not exist.")
     raise FileNotFoundError(f"Model file {model_file} does not exist.")

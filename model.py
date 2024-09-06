@@ -22,7 +22,7 @@ class CarDetectionCNN(nn.Module):
         return F.log_softmax(x, dim=1)  # Log softmax for classification
 
 
-class CarDetectionCNNSmall():
+class CarDetectionCNNSmall(nn.Module):
     def __init__(self):
         super(CarDetectionCNNSmall, self).__init__()
         self.conv1 = nn.Conv2d(3, 8, 3, 1)  # First convolution layer
