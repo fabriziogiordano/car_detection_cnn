@@ -6,6 +6,10 @@ from torchvision.datasets import ImageFolder
 from torchvision import transforms
 from model import CarDetectionCNNSmall
 
+# Check if CUDA is available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+
 # Define data transformations
 transform = transforms.Compose([transforms.ToTensor()])
 
@@ -14,9 +18,9 @@ train_data = ImageFolder("data/train", transform=transform)
 train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 
 # Initialize the model, loss function, and optimizer
-model = CarDetectionCNNSmall()
+model = CarDetectionCNNSmall().to(device)  # Move the model to the GPU
 # model.load_state_dict(
-#     torch.load("./models/v2/car_detection_cnn.pth", weights_only=True)
+#     torch.load("./models/v2/car_detection_cnn.pth", map_location=device)
 # )
 # model.train()  # Set the model to training mode
 
@@ -29,6 +33,7 @@ for epoch in range(epochs):
     model.train()
     running_loss = 0.0
     for images, labels in train_loader:
+        images, labels = images.to(device), labels.to(device)  # Move data to the GPU
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, labels)
@@ -43,9 +48,9 @@ torch.save(model.state_dict(), "./models/v2/car_detection_cnn.small.pth")
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
-    model,
-    {nn.Linear},  # Specify layers to be quantized (e.g., Linear layers)
-    dtype=torch.qint8,  # Use 8-bit integer quantization
+    model.to("cpu"),  # Move the model to the CPU before quantization
+    {nn.Linear},      # Specify layers to be quantized (e.g., Linear layers)
+    dtype=torch.qint8 # Use 8-bit integer quantization
 )
 
 # Save the quantized model state dictionary
