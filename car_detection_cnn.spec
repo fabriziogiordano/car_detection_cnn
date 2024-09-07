@@ -9,7 +9,7 @@ a = Analysis(
     ['run_inference_pt_percentages.py'],  # Replace with your actual script filename
     pathex=[],
     binaries=[],
-    datas=[(model_file, 'models/prod')],  # Include model in the executable
+    datas=[(model_file, 'models/prod')],                     # Include model in the executable
     hiddenimports=['torch', 'flask', 'PIL', 'torchvision'],  # Include necessary hidden imports
     hookspath=[],
     hooksconfig={},

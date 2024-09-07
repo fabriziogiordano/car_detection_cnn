@@ -27,4 +27,6 @@ python run_inference_pt_percentages.py
 
 curl -X POST -F "file=@/home/pi/Projects/parking_lot_classifier/scripts/ftp/last.jpg" http://localhost:5000/classify
 
-rm -rf ./build && cp ./models/v2/car_detection_cnn_scripted_quantized.pt ./models/prod/model.pt && pyinstaller car_detection_cnn.spec && cp dist/car_detection ../astro/db
+rm -rf ./build && cp ./models/v2/car_detection_cnn_scripted_quantized.pt ./models/prod/model.pt && pyinstaller car_detection_cnn.spec && cp dist/car_detection_server ../astro/db
+
+./dist/car_detection_server

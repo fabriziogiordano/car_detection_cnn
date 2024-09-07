@@ -3,4 +3,4 @@ build/
 __pycache__/
 *.jpg
 
-dist/car_detection
+dist/car_detection_server
