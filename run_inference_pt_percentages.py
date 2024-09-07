@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -7,6 +8,10 @@ from flask import Flask, request, jsonify
 from io import BytesIO
 
 app = Flask(__name__)
+
+# Suppress the warning
+warnings.filterwarnings("ignore", category=UserWarning, module='flask')
+
 
 # Define transformations
 transform = transforms.Compose(

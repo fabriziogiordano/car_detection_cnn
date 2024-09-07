@@ -6,7 +6,7 @@ from PyInstaller.utils.hooks import collect_data_files
 model_file = './models/prod/car_detection_cnn_scripted.pt'
 
 a = Analysis(
-    ['your_flask_script.py'],  # Replace with your actual script filename
+    ['run_inference_pt_percentages.py'],  # Replace with your actual script filename
     pathex=[],
     binaries=[],
     datas=[(model_file, 'models/prod')],  # Include model in the executable
