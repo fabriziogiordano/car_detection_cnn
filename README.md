@@ -28,3 +28,5 @@ python run_inference_pt_percentages.py ./data/20240902082401.jpg
 python run_inference_pt_percentages.py /home/pi/Projects/parking_lot_classifier/scripts/ftp/last.jpg
 rm -rf ./build && cp ./models/v2/car_detection_cnn_scripted_quantized.pt ./models/prod/model.pt && pyinstaller car_detection_cnn.spec && cp dist/car_detection ../astro/db
 
+curl -X POST -F "file=@/path/to/your/image.jpg" http://localhost:5000/classify
+

@@ -3,7 +3,10 @@ import sys
 import torch
 from PIL import Image
 from torchvision import transforms
-import argparse
+from flask import Flask, request, jsonify
+from io import BytesIO
+
+app = Flask(__name__)
 
 # Define transformations
 transform = transforms.Compose(
@@ -33,19 +36,18 @@ def load_scripted_model(model_path):
     return model
 
 
-def classify_image(model, image_path):
+def classify_image(model, image):
     """
     Classifies an image as 'car parked', 'no car parked', or 'unknown' and returns the probability.
 
     Parameters:
     - model (torch.jit.ScriptModule): The scripted model for inference.
-    - image_path (str): Path to the image to be classified.
+    - image (PIL.Image): Image to be classified.
 
     Returns:
     - tuple: (classification result, probability)
     """
-    # Load and transform the image
-    image = Image.open(image_path)
+    # Transform the image
     image = transform(image).unsqueeze(0)  # Add batch dimension
 
     # Perform inference
@@ -70,30 +72,33 @@ def classify_image(model, image_path):
     return classes[predicted_class], probability
 
 
-def main():
-    # Create argument parser
-    parser = argparse.ArgumentParser(
-        description="Classify an image using a scripted model."
-    )
-    parser.add_argument(
-        "image_path", type=str, help="Path to the image to be classified"
-    )
-    args = parser.parse_args()
+# Load the model once when the server starts
+model_file = "models/prod/car_detection_cnn_scripted.pt"
+base_path = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(base_path, model_file)
+model = load_scripted_model(model_path)
 
-    # Path to the scripted model
-    model_file = (
-        "models/prod/car_detection_cnn_scripted.pt"
-    )
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(base_path, model_file)
 
-    # Load the scripted model
-    model = load_scripted_model(model_path)
+@app.route("/classify", methods=["POST"])
+def classify():
+    """
+    Endpoint to classify an image. Expects an image file in the request.
+    """
+    if "file" not in request.files:
+        return jsonify({"error": "No file part"}), 400
 
-    # Classify the image
-    result, probability = classify_image(model, args.image_path)
-    print(f"{result}, {probability:.2f}")
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    try:
+        image = Image.open(file.stream)
+        result, probability = classify_image(model, image)
+        return jsonify({"result": result, "probability": probability})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
-    main()
+    app.run(host="0.0.0.0", port=5000)

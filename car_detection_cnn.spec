@@ -1,21 +1,16 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 from PyInstaller.utils.hooks import collect_data_files
-from PyInstaller import log as logger
-import os
 
-# Verify the model file exists
-model_file = "./models/prod/model.pt"
-if not os.path.isfile(model_file):
-    logger.error(f"Model file {model_file} does not exist.")
-    raise FileNotFoundError(f"Model file {model_file} does not exist.")
+# Path to the model file
+model_file = './models/prod/car_detection_cnn_scripted.pt'
 
 a = Analysis(
-    ["run_inference_pt_percentages.py"],
+    ['your_flask_script.py'],  # Replace with your actual script filename
     pathex=[],
     binaries=[],
-    datas=[(model_file, "models/prod")],
-    hiddenimports=[],
+    datas=[(model_file, 'models/prod')],  # Include model in the executable
+    hiddenimports=['torch', 'flask', 'PIL', 'torchvision'],  # Include necessary hidden imports
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -32,7 +27,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name="car_detection",
+    name='car_detection_server',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

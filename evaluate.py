@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from model import CarDetectionCNN
+from model import CarDetectionCNNSmall
 import argparse
 
 import warnings
@@ -31,7 +31,7 @@ def load_model(model_path, device, quantized=False):
     Returns:
     - model (nn.Module): Loaded model ready for evaluation.
     """
-    model = CarDetectionCNN()
+    model = CarDetectionCNNSmall()
 
     if quantized:
         # Force device to CPU for quantized models
@@ -101,9 +101,9 @@ def main():
     args = parser.parse_args()
 
     # Check if CUDA is available and select device accordingly
-    device = torch.device(
-        "cuda" if torch.cuda.is_available() and not args.quantized else "cpu"
-    )
+    # "cuda" if torch.cuda.is_available() and not args.quantized else "cpu"
+    
+    device = torch.device("cpu")
     print(f"Using device: {device}")
 
     # Load test data

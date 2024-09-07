@@ -87,7 +87,7 @@ for epoch in range(epochs):
             break
 
 # Load the best model for further usage or inference
-model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth"))
+model.load_state_dict(torch.load("./models/v2/car_detection_cnn.pth", weights_only=True, map_location=device))
 
 # Quantize the model dynamically for inference
 quantized_model = torch.quantization.quantize_dynamic(
