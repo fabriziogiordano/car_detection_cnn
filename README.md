@@ -1,5 +1,6 @@
 # Install pytorch
 
+```bash
 -- pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
 python -m venv .venv
@@ -8,6 +9,7 @@ deactivate
 pip install torch torchvision torchaudio pyinstaller
 pip freeze > requirements.txt
 pip install -r requirements.txt
+```
 
 # Series of commands
 
